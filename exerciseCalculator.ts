@@ -16,7 +16,7 @@ const parseArguments = (args: string[]): Input => {
   const exerciseNums = args.slice(3).map(Number);
   const target = Number(args[2]);
   if (exerciseNums.length < 3) {
-    throw new Error("Input more than 3 days. ");
+    throw new Error("Input has to be more than 3 days. ");
   }
   if (!isNaN(target) && exerciseNums.every((num) => !isNaN(num))) {
     return { exerciseNums, target };
@@ -75,3 +75,5 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   console.error(error.message);
 }
+
+export { exerciseCalculator };
