@@ -8,8 +8,16 @@ router.get("/", (_req, res) => {
   res.send(patients);
 });
 
-router.post("/", (_req, res) => {
-  res.send("Saving a patient!");
+router.post("/", (req, res) => {
+  const { name, dateOfBirth, gender, occupation, ssn } = req.body;
+  const addedPatient = patientsService.addPatient({
+    name,
+    dateOfBirth,
+    gender,
+    occupation,
+    ssn,
+  });
+  res.json(addedPatient);
 });
 
 export default router;
