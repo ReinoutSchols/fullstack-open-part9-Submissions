@@ -14,7 +14,7 @@ function App() {
         setDiaries(response.data);
       });
   }, []);
-  console.log(diaries);
+  // console.log(diaries);
   return (
     <div>
       <h2>Add new entry</h2>

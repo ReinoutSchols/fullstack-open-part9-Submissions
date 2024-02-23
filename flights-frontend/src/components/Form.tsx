@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { DiariesProps } from "../type";
+import { DiariesProps, Visibility, Weather } from "../type";
 import axios from "axios";
 
 export const Form = (props: {
@@ -7,8 +7,8 @@ export const Form = (props: {
   setDiaries: React.Dispatch<React.SetStateAction<DiariesProps[]>>;
 }) => {
   const [date, setDate] = useState("");
-  const [visibility, setVisibility] = useState("");
-  const [weather, setWeather] = useState("");
+  const [visibility, setVisibility] = useState<Visibility>(Visibility.Great);
+  const [weather, setWeather] = useState<Weather>(Weather.Sunny);
   const [comment, setComment] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -44,8 +44,8 @@ export const Form = (props: {
         }
       });
     setDate("");
-    setVisibility("");
-    setWeather("");
+    // setVisibility("");
+    // setWeather("");
     setComment("");
   };
   return (
@@ -55,35 +55,102 @@ export const Form = (props: {
         <div>
           <label htmlFor="date">Date:</label>
           <input
-            type="text"
+            type="date"
             id="date"
             value={date}
             onChange={(event) => setDate(event.target.value)}
           />
         </div>
-        <div>
-          <label htmlFor="visibility">Visibility:</label>
+        <fieldset>
+          <legend>Visibility:</legend>
+          <label>great</label>
           <input
-            type="text"
-            id="visibility"
-            value={visibility}
-            onChange={(event) => setVisibility(event.target.value)}
+            type="radio"
+            value="great"
+            onChange={(event) =>
+              setVisibility(event.target.value as Visibility)
+            }
+            name="visibility"
+            checked={visibility === "great"}
           />
-        </div>
-        <div>
-          <label htmlFor="weather">Weather:</label>
+          <label>good</label>
           <input
-            type="text"
-            id="weather"
-            value={weather}
-            onChange={(event) => setWeather(event.target.value)}
+            type="radio"
+            value="good"
+            onChange={(event) =>
+              setVisibility(event.target.value as Visibility)
+            }
+            name="visibility"
+            checked={visibility === "good"}
           />
-        </div>
+          <label>ok</label>
+          <input
+            type="radio"
+            value="ok"
+            onChange={(event) =>
+              setVisibility(event.target.value as Visibility)
+            }
+            name="visibility"
+            checked={visibility === "ok"}
+          />
+          <label>poor</label>
+          <input
+            type="radio"
+            value="poor"
+            onChange={(event) =>
+              setVisibility(event.target.value as Visibility)
+            }
+            name="visibility"
+            checked={visibility === "poor"}
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Weather:</legend>
+          <label>sunny</label>
+          <input
+            type="radio"
+            value="sunny"
+            onChange={(event) => setWeather(event.target.value as Weather)}
+            name="weather"
+            checked={weather === "sunny"}
+          />
+          <label>rainy</label>
+          <input
+            type="radio"
+            value="rainy"
+            onChange={(event) => setWeather(event.target.value as Weather)}
+            name="rainy"
+            checked={weather === "rainy"}
+          />
+          <label>cloudy</label>
+          <input
+            type="radio"
+            value="cloudy"
+            onChange={(event) => setWeather(event.target.value as Weather)}
+            name="weather"
+            checked={weather === "cloudy"}
+          />
+          <label>stormy</label>
+          <input
+            type="radio"
+            value="stormy"
+            onChange={(event) => setWeather(event.target.value as Weather)}
+            name="weather"
+            checked={weather === "stormy"}
+          />
+          <label>windy</label>
+          <input
+            type="radio"
+            value="windy"
+            onChange={(event) => setWeather(event.target.value as Weather)}
+            name="weather"
+            checked={weather === "windy"}
+          />
+        </fieldset>
         <div>
-          <label htmlFor="comment">Comment:</label>
+          <label>Comment:</label>
           <input
             type="text"
-            id="comment"
             value={comment}
             onChange={(event) => setComment(event.target.value)}
           />
