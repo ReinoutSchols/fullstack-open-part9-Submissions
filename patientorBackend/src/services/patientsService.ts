@@ -40,9 +40,20 @@ const getNonSensitivePatient = (id: string): Patients | undefined => {
   };
 };
 
+const getPatient = (id: string): Patients | undefined => {
+  const patient = patients.find((patient) => patient.id === id);
+  if (!patient) {
+    return undefined;
+  }
+  return {
+    ...patient,
+  };
+};
+
 export default {
   getPatients,
   getPatientsWithoutSsn,
   addPatient,
   getNonSensitivePatient,
+  getPatient,
 };

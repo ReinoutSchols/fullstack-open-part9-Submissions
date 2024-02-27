@@ -12,7 +12,7 @@ router.get("/", (_req, res) => {
 router.get("/:id", (req, res) => {
   try {
     const id = req.params.id;
-    const patient = patientsService.getNonSensitivePatient(id);
+    const patient = patientsService.getPatient(id);
     res.send(patient);
   } catch (error: unknown) {
     let errorMessage = "something went wrong";
