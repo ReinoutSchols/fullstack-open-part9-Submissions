@@ -42,6 +42,12 @@ interface BaseEntry {
 export interface Map {
   [code: string]: string;
 }
+
+export interface PropsEntriesComponent {
+  diagnoses: Diagnosis[];
+  patient: Patient;
+}
+
 export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
@@ -49,18 +55,18 @@ export enum HealthCheckRating {
   "CriticalRisk" = 3,
 }
 
-interface HealthCheckEntry extends BaseEntry {
+export interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
 }
 
-interface OccupationalHealthcareEntry extends BaseEntry {
+export interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
   sickLeave?: sickLeave;
 }
 
-interface HospitalEntry extends BaseEntry {
+export interface HospitalEntry extends BaseEntry {
   type: "Hospital";
   discharge: Discharge;
 }
