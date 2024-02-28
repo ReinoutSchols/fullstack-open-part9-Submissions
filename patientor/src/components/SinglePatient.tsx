@@ -2,12 +2,14 @@ import { useParams } from "react-router-dom";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import AccessibilityIcon from "@mui/icons-material/Accessibility";
-import { Patient } from "../types";
+import { Diagnosis, Entry, Patient, Map } from "../types";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
 
 const SinglePatient = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[] | null>(null);
+
   const params = useParams<{ id: string }>();
   const id = params.id;
 
@@ -19,7 +21,16 @@ const SinglePatient = () => {
     void fetchPatient(id!);
   }, [id]);
 
+  useEffect(() => {
+    const fetchDiagnoses = async () => {
+      const fetchedDiagnoses: Diagnosis[] = await patientService.getDiagnoses();
+      setDiagnoses(fetchedDiagnoses);
+    };
+    void fetchDiagnoses();
+  }, [id]);
+
   if (!patient) return <div>Loading...</div>;
+  if (!diagnoses) return <div>Loading...</div>;
 
   if (patient.entries.length === 0) {
     return (
@@ -41,12 +52,31 @@ const SinglePatient = () => {
     );
   }
 
+  const diagnosisMap: Map = diagnoses.reduce((map: Map, diagnosis) => {
+    map[diagnosis.code] = diagnosis.name;
+    return map;
+  }, {});
+  console.log("diagnosismap", diagnosisMap);
+
+  patient.entries.forEach((entry: Entry) => {
+    entry.diagnosisNames = entry.diagnosisCodes
+      ? entry.diagnosisCodes.map(
+          (code) => diagnosisMap[code] || "Unknown diagnosis"
+        )
+      : undefined;
+  });
+
   const diagnosisListItems = () => {
     return (
       <ul>
-        {patient.entries[0].diagnosisCodes
+        {patient.entries[0].diagnosisCodes && diagnoses
           ? patient.entries[0].diagnosisCodes.map((c, index) => (
-              <li key={index}> {c}</li>
+              <li key={index}>
+                {" "}
+                {c}{" "}
+                {diagnoses.find((d) => d.code === c)?.name ||
+                  "unknown diagnosis"}
+              </li>
             ))
           : null}
       </ul>
@@ -56,11 +86,20 @@ const SinglePatient = () => {
   const otherEntries = () => {
     return (
       <>
-        {patient.entries[0].date ? patient.entries[0].date : null}{" "}
-        {patient.entries[0].description ? patient.entries[0].description : null}
+        {patient.entries
+          ? patient.entries.map((e) => {
+              console.log("e.date", e.date);
+              return (
+                <p>
+                  {e.date} {e.description}
+                </p>
+              );
+            })
+          : null}
       </>
     );
   };
+
   const Icon =
     patient.gender === "male"
       ? MaleIcon
@@ -69,6 +108,7 @@ const SinglePatient = () => {
       : AccessibilityIcon;
 
   console.log("logging patient in SinglePatient", patient);
+  console.log("logging diagnoses in SinglePatient component", diagnoses);
 
   return (
     <div>

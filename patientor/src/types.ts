@@ -36,8 +36,12 @@ interface BaseEntry {
   date: string;
   specialist: string;
   diagnosisCodes?: Array<Diagnosis["code"]>;
+  diagnosisNames?: Array<Diagnosis["name"]>;
 }
 
+export interface Map {
+  [code: string]: string;
+}
 export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
