@@ -3,6 +3,8 @@ import {
   Diagnosis,
   // Entry,
   HealthCheckEntryFormValues,
+  HospitalEntryFormValues,
+  OccupationalHealthcareEntryForm,
   Patient,
   PatientFormValues,
 } from "../types";
@@ -41,10 +43,38 @@ const createEntry = async (object: HealthCheckEntryFormValues, id: string) => {
   return data;
 };
 
+const createEntryOccupational = async (
+  object: OccupationalHealthcareEntryForm,
+  id: string
+) => {
+  console.log("logging object in createEntry:", object);
+  console.log("logging id in createEntry:", id);
+  const { data } = await axios.post<Patient>(
+    `${apiBaseUrl}/patients/${id}/entries`,
+    { ...object, id: id }
+  );
+  return data;
+};
+
+const createEntryHospital = async (
+  object: HospitalEntryFormValues,
+  id: string
+) => {
+  console.log("logging object in createEntry:", object);
+  console.log("logging id in createEntry:", id);
+  const { data } = await axios.post<Patient>(
+    `${apiBaseUrl}/patients/${id}/entries`,
+    { ...object, id: id }
+  );
+  return data;
+};
+
 export default {
   getAll,
   create,
   getPatient,
   getDiagnoses,
   createEntry,
+  createEntryOccupational,
+  createEntryHospital,
 };

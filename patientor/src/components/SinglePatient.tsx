@@ -2,13 +2,21 @@ import { useParams } from "react-router-dom";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import AccessibilityIcon from "@mui/icons-material/Accessibility";
-import { Diagnosis, HealthCheckEntryFormValues, Patient } from "../types";
+import {
+  Diagnosis,
+  HealthCheckEntryFormValues,
+  HospitalEntryFormValues,
+  OccupationalHealthcareEntryForm,
+  Patient,
+} from "../types";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
 import EntriesComponent from "./EntriesComponent";
 import Button from "@mui/material/Button";
-import AddEntryForm from "./AddEntryForm";
+import HealthCheckAddEntryFormfrom from "./HealthCheckAddEntryForm";
+import OccupationalHealthcareAddEntryForm from "./OccupationalHealthcareEntryForm";
 import axios from "axios";
+import HospitalAddEntryForm from "./HospitalEntryForm";
 
 const SinglePatient = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -19,7 +27,7 @@ const SinglePatient = () => {
   const openForm = () => setOpen(true);
 
   const params = useParams<{ id: string }>();
-  const id = params.id;
+  const id = params.id || "";
 
   const submitNewEntry = async (values: HealthCheckEntryFormValues) => {
     try {
@@ -47,6 +55,69 @@ const SinglePatient = () => {
       }
     }
   };
+
+  const submitNewEntryOccupational = async (
+    values: OccupationalHealthcareEntryForm
+  ) => {
+    try {
+      const updatedPatient = await patientService.createEntryOccupational(
+        values,
+        id
+      );
+      setPatient(updatedPatient);
+      setOpen(false);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace(
+            "Something went wrong. Error: ",
+            ""
+          );
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+        setTimeout(() => {
+          setError("");
+        }, 5000);
+      }
+    }
+  };
+
+  const submitNewEntryHospital = async (values: HospitalEntryFormValues) => {
+    try {
+      const updatedPatient = await patientService.createEntryHospital(
+        values,
+        id
+      );
+      setPatient(updatedPatient);
+      setOpen(false);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace(
+            "Something went wrong. Error: ",
+            ""
+          );
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+        setTimeout(() => {
+          setError("");
+        }, 5000);
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchPatient = async (id: string) => {
       const patient = await patientService.getPatient(id);
@@ -113,10 +184,20 @@ const SinglePatient = () => {
       >
         <h3 style={{ color: "red" }}>{error}</h3>
         {open && (
-          <AddEntryForm
-            onCancel={() => setOpen(false)}
-            onSubmit={submitNewEntry}
-          />
+          <>
+            <HealthCheckAddEntryFormfrom
+              onCancel={() => setOpen(false)}
+              onSubmit={submitNewEntry}
+            />
+            <OccupationalHealthcareAddEntryForm
+              onCancel={() => setOpen(false)}
+              onSubmit={submitNewEntryOccupational}
+            />
+            <HospitalAddEntryForm
+              onCancel={() => setOpen(false)}
+              onSubmit={submitNewEntryHospital}
+            />
+          </>
         )}
       </div>
       <br />

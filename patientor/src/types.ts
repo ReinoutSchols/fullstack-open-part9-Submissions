@@ -20,12 +20,12 @@ export interface Patient {
   entries: Entry[];
 }
 
-interface Discharge {
+export interface Discharge {
   date: string;
   criteria: string;
 }
 
-interface sickLeave {
+export interface sickLeave {
   startDate: string;
   endDate: string;
 }
@@ -78,3 +78,8 @@ export type Entry =
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 export type HealthCheckEntryFormValues = Omit<HealthCheckEntry, "id">;
+export type HospitalEntryFormValues = Omit<HospitalEntry, "id">;
+export type OccupationalHealthcareEntryForm = Omit<
+  OccupationalHealthcareEntry,
+  "id"
+>;

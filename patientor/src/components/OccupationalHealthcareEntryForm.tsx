@@ -1,22 +1,25 @@
 import { useState, SyntheticEvent } from "react";
-import { HealthCheckRating, HealthCheckEntryFormValues } from "../types";
+import { OccupationalHealthcareEntryForm, sickLeave } from "../types";
 import { TextField, Grid, Button } from "@mui/material";
 
 interface Props {
   onCancel: () => void;
-  onSubmit: (values: HealthCheckEntryFormValues) => void;
+  onSubmit: (values: OccupationalHealthcareEntryForm) => void;
 }
 
-const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+const OccupationalHealthcareAddEntryForm = ({ onCancel, onSubmit }: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
-  const [healthCheckRating, setHealthCheckRating] = useState<number>(
-    HealthCheckRating.Healthy
-  );
+  const [employerName, setEmployerName] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [type, setType] = useState<"HealthCheck">("HealthCheck");
+  const [type] = useState<"OccupationalHealthcare">("OccupationalHealthcare");
+
+  const [sickLeaveState, setSickLeave] = useState<sickLeave>({
+    startDate: "",
+    endDate: "",
+  });
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -24,15 +27,17 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
       description,
       date,
       specialist,
-      healthCheckRating,
+      employerName,
       diagnosisCodes,
       type,
+      sickLeave: sickLeaveState,
     });
   };
 
   return (
-    <div>
+    <div style={{ marginTop: "4em" }}>
       <form onSubmit={addEntry}>
+        <h3> New Occupational entry </h3>
         <TextField
           label="Description"
           fullWidth
@@ -53,18 +58,40 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           onChange={({ target }) => setSpecialist(target.value)}
         />
         <TextField
-          label="Health Check Rating"
+          label="Employer Name"
           fullWidth
-          value={healthCheckRating.toString()}
-          onChange={({ target }) =>
-            setHealthCheckRating(parseInt(target.value))
-          }
+          value={employerName}
+          onChange={({ target }) => setEmployerName(target.value)}
         />
         <TextField
           label="Diagnosis Codes"
           fullWidth
           value={diagnosisCodes.join(", ")}
           onChange={({ target }) => setDiagnosisCodes(target.value.split(","))}
+        />
+        <TextField
+          label="sickleave Start"
+          fullWidth
+          placeholder="YYYY-MM-DD"
+          value={sickLeaveState.startDate}
+          onChange={(event) =>
+            setSickLeave((prevSickLeave) => ({
+              ...prevSickLeave,
+              startDate: event.target.value,
+            }))
+          }
+        />
+        <TextField
+          label="sickLeave End"
+          fullWidth
+          placeholder="YYYY-MM-DD"
+          value={sickLeaveState.endDate}
+          onChange={(event) =>
+            setSickLeave((prevSickLeave) => ({
+              ...prevSickLeave,
+              endDate: event.target.value,
+            }))
+          }
         />
         <Grid>
           <Grid item>
@@ -96,4 +123,4 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   );
 };
 
-export default AddEntryForm;
+export default OccupationalHealthcareAddEntryForm;
