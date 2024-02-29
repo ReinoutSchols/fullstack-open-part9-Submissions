@@ -2,19 +2,51 @@ import { useParams } from "react-router-dom";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import AccessibilityIcon from "@mui/icons-material/Accessibility";
-import { Diagnosis, Patient } from "../types";
+import { Diagnosis, HealthCheckEntryFormValues, Patient } from "../types";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
 import EntriesComponent from "./EntriesComponent";
 import Button from "@mui/material/Button";
+import AddEntryForm from "./AddEntryForm";
+import axios from "axios";
 
 const SinglePatient = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[] | null>(null);
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+
+  const openForm = () => setOpen(true);
 
   const params = useParams<{ id: string }>();
   const id = params.id;
 
+  const submitNewEntry = async (values: HealthCheckEntryFormValues) => {
+    try {
+      const updatedPatient = await patientService.createEntry(values, id);
+      setPatient(updatedPatient);
+      setOpen(false);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace(
+            "Something went wrong. Error: ",
+            ""
+          );
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+        setTimeout(() => {
+          setError("");
+        }, 5000);
+      }
+    }
+  };
   useEffect(() => {
     const fetchPatient = async (id: string) => {
       const patient = await patientService.getPatient(id);
@@ -70,12 +102,26 @@ const SinglePatient = () => {
         {patient.name} <Icon />
       </h2>
       {patient.ssn}
-      <br></br>occupation: {patient.occupation}
-      <h2>entries</h2>
-      <EntriesComponent diagnoses={diagnoses} patient={patient} />
-      <Button variant="contained" color="primary">
+      <br></br> <p>occupation: {patient.occupation}</p>
+      <Button variant="contained" color="primary" onClick={openForm}>
         Add new entry
       </Button>
+      <div
+        style={{
+          margin: "0.3em",
+        }}
+      >
+        <h3 style={{ color: "red" }}>{error}</h3>
+        {open && (
+          <AddEntryForm
+            onCancel={() => setOpen(false)}
+            onSubmit={submitNewEntry}
+          />
+        )}
+      </div>
+      <br />
+      <h2>entries</h2>
+      <EntriesComponent diagnoses={diagnoses} patient={patient} />
     </div>
   );
 };

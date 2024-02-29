@@ -35,16 +35,18 @@ const addPatient = (entry: NewPatientType): Patients => {
   patients.push(newPatient);
   return newPatient;
 };
-const addEntry = (entry: Entry, id: string): Entry[] => {
+
+const addEntry = (entry: Entry, id: string): Patients => {
   const patientIndex = patients.findIndex((patient) => patient.id === id);
-
-  const updatedPatients = [...patients];
-  updatedPatients[patientIndex] = {
-    ...updatedPatients[patientIndex],
-    entries: [...updatedPatients[patientIndex].entries, entry],
-  };
-
-  return updatedPatients[patientIndex].entries;
+  if (patientIndex === -1) {
+    throw new Error(`Patient with ID ${id} not found`);
+  }
+  const updatedPatients = patients.map((patient) =>
+    patient.id === id
+      ? { ...patient, entries: [...patient.entries, entry] }
+      : patient
+  );
+  return updatedPatients[patientIndex];
 };
 
 const getNonSensitivePatient = (id: string): Patients | undefined => {
