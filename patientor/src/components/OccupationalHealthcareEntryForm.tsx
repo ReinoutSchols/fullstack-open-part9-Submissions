@@ -1,6 +1,15 @@
 import { useState, SyntheticEvent } from "react";
 import { OccupationalHealthcareEntryForm, sickLeave } from "../types";
-import { TextField, Grid, Button } from "@mui/material";
+import {
+  TextField,
+  Grid,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import { diagnosesData } from "../utils";
 
 interface Props {
   onCancel: () => void;
@@ -20,7 +29,7 @@ const OccupationalHealthcareAddEntryForm = ({ onCancel, onSubmit }: Props) => {
     startDate: "",
     endDate: "",
   });
-
+  console.log("sickleavstart & sickleaveend:", sickLeaveState);
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
     onSubmit({
@@ -44,13 +53,16 @@ const OccupationalHealthcareAddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <TextField
-          label="date"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
+        <div>
+          <label>Current date</label>
+          <br />
+          <TextField
+            fullWidth
+            value={date}
+            type="date"
+            onChange={({ target }) => setDate(target.value)}
+          />
+        </div>
         <TextField
           label="Specialist"
           fullWidth
@@ -63,36 +75,54 @@ const OccupationalHealthcareAddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={employerName}
           onChange={({ target }) => setEmployerName(target.value)}
         />
-        <TextField
-          label="Diagnosis Codes"
-          fullWidth
-          value={diagnosisCodes.join(", ")}
-          onChange={({ target }) => setDiagnosisCodes(target.value.split(","))}
-        />
-        <TextField
-          label="sickleave Start"
-          fullWidth
-          placeholder="YYYY-MM-DD"
-          value={sickLeaveState.startDate}
-          onChange={(event) =>
-            setSickLeave((prevSickLeave) => ({
-              ...prevSickLeave,
-              startDate: event.target.value,
-            }))
-          }
-        />
-        <TextField
-          label="sickLeave End"
-          fullWidth
-          placeholder="YYYY-MM-DD"
-          value={sickLeaveState.endDate}
-          onChange={(event) =>
-            setSickLeave((prevSickLeave) => ({
-              ...prevSickLeave,
-              endDate: event.target.value,
-            }))
-          }
-        />
+        <FormControl fullWidth>
+          <InputLabel id="DiagnosisCodes-label">Diagnosis Codes</InputLabel>
+          <Select
+            labelId="DiagnosisCodes-label"
+            multiple
+            value={diagnosisCodes}
+            onChange={(event) => {
+              const selectedCodes = event.target.value as string[];
+              setDiagnosisCodes(selectedCodes);
+            }}
+          >
+            {diagnosesData.map((option) => (
+              <MenuItem key={option.code} value={option.code}>
+                {option.code}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <div>
+          <label>Sick Leave Start</label>
+          <br />
+          <TextField
+            fullWidth
+            type="date"
+            value={sickLeaveState.startDate}
+            onChange={(event) =>
+              setSickLeave((prevSickLeave) => ({
+                ...prevSickLeave,
+                startDate: event.target.value,
+              }))
+            }
+          />
+        </div>
+        <div>
+          <label>Sick Leave End</label>
+          <br />
+          <TextField
+            fullWidth
+            type="date"
+            value={sickLeaveState.endDate}
+            onChange={(event) =>
+              setSickLeave((prevSickLeave) => ({
+                ...prevSickLeave,
+                endDate: event.target.value,
+              }))
+            }
+          />
+        </div>
         <Grid>
           <Grid item>
             <Button

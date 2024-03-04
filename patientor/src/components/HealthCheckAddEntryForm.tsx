@@ -1,6 +1,15 @@
 import { useState, SyntheticEvent } from "react";
 import { HealthCheckRating, HealthCheckEntryFormValues } from "../types";
-import { TextField, Grid, Button } from "@mui/material";
+import {
+  TextField,
+  Grid,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import { diagnosesData, HealthCheckRatingOptions } from "../utils";
 
 interface Props {
   onCancel: () => void;
@@ -15,8 +24,7 @@ const HealthCheckAddEntryForm = ({ onCancel, onSubmit }: Props) => {
     HealthCheckRating.Healthy
   );
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [type, setType] = useState<"HealthCheck">("HealthCheck");
+  const [type] = useState<"HealthCheck">("HealthCheck");
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -40,33 +48,58 @@ const HealthCheckAddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <TextField
-          label="date"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
+        <div>
+          <label>Current date</label>
+          <br />
+          <TextField
+            fullWidth
+            value={date}
+            type="date"
+            onChange={({ target }) => setDate(target.value)}
+          />
+        </div>
         <TextField
           label="Specialist"
           fullWidth
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
-        <TextField
-          label="Health Check Rating"
-          fullWidth
-          value={healthCheckRating.toString()}
-          onChange={({ target }) =>
-            setHealthCheckRating(parseInt(target.value))
-          }
-        />
-        <TextField
-          label="Diagnosis Codes"
-          fullWidth
-          value={diagnosisCodes.join(", ")}
-          onChange={({ target }) => setDiagnosisCodes(target.value.split(","))}
-        />
+        <FormControl fullWidth>
+          <InputLabel id="health-check-rating-label">
+            Health Check Rating
+          </InputLabel>
+          <Select
+            labelId="health-check-rating-label"
+            value={healthCheckRating}
+            onChange={(event) =>
+              setHealthCheckRating(event.target.value as number)
+            }
+          >
+            {HealthCheckRatingOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="DiagnosisCodes-label">Diagnosis Codes</InputLabel>
+          <Select
+            labelId="DiagnosisCodes-label"
+            multiple
+            value={diagnosisCodes}
+            onChange={(event) => {
+              const selectedCodes = event.target.value as string[];
+              setDiagnosisCodes(selectedCodes);
+            }}
+          >
+            {diagnosesData.map((option) => (
+              <MenuItem key={option.code} value={option.code}>
+                {option.code}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <Grid>
           <Grid item>
             <Button

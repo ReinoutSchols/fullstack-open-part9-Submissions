@@ -1,6 +1,15 @@
 import { useState, SyntheticEvent } from "react";
 import { HospitalEntryFormValues, Discharge } from "../types";
-import { TextField, Grid, Button } from "@mui/material";
+import { diagnosesData } from "../utils";
+import {
+  TextField,
+  Grid,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 
 interface Props {
   onCancel: () => void;
@@ -16,7 +25,6 @@ const HospitalAddEntryForm = ({ onCancel, onSubmit }: Props) => {
     criteria: "",
   });
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [type] = useState<"Hospital">("Hospital");
 
   const addEntry = (event: SyntheticEvent) => {
@@ -41,30 +49,37 @@ const HospitalAddEntryForm = ({ onCancel, onSubmit }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <TextField
-          label="date"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
+        <div>
+          <label>Current date</label>
+          <br />
+          <TextField
+            fullWidth
+            value={date}
+            type="date"
+            onChange={({ target }) => setDate(target.value)}
+          />
+        </div>
         <TextField
           label="Specialist"
           fullWidth
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
-        <TextField
-          label="Discharge Date"
-          fullWidth
-          value={discharge.date}
-          onChange={(event) =>
-            setDischarge((prevDischarge) => ({
-              ...prevDischarge,
-              date: event.target.value,
-            }))
-          }
-        />
+        <div>
+          <label>Discharge date</label>
+          <br />
+          <TextField
+            fullWidth
+            value={discharge.date}
+            type="date"
+            onChange={(event) =>
+              setDischarge((prevDischarge) => ({
+                ...prevDischarge,
+                date: event.target.value,
+              }))
+            }
+          />
+        </div>
         <TextField
           label="Discharge Criteria"
           fullWidth
@@ -76,12 +91,24 @@ const HospitalAddEntryForm = ({ onCancel, onSubmit }: Props) => {
             }))
           }
         />
-        <TextField
-          label="Diagnosis Codes"
-          fullWidth
-          value={diagnosisCodes.join(", ")}
-          onChange={({ target }) => setDiagnosisCodes(target.value.split(","))}
-        />
+        <FormControl fullWidth>
+          <InputLabel id="DiagnosisCodes-label">Diagnosis Codes</InputLabel>
+          <Select
+            labelId="DiagnosisCodes-label"
+            multiple
+            value={diagnosisCodes}
+            onChange={(event) => {
+              const selectedCodes = event.target.value as string[];
+              setDiagnosisCodes(selectedCodes);
+            }}
+          >
+            {diagnosesData.map((option) => (
+              <MenuItem key={option.code} value={option.code}>
+                {option.code}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <Grid>
           <Grid item>
             <Button

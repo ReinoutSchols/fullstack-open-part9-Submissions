@@ -29,6 +29,22 @@ const SinglePatient = () => {
   const params = useParams<{ id: string }>();
   const id = params.id || "";
 
+  useEffect(() => {
+    const fetchPatient = async (id: string) => {
+      const patient = await patientService.getPatient(id);
+      setPatient(patient);
+    };
+    void fetchPatient(id!);
+  }, [id]);
+
+  useEffect(() => {
+    const fetchDiagnoses = async () => {
+      const fetchedDiagnoses: Diagnosis[] = await patientService.getDiagnoses();
+      setDiagnoses(fetchedDiagnoses);
+    };
+    void fetchDiagnoses();
+  }, [id]);
+
   const submitNewEntry = async (values: HealthCheckEntryFormValues) => {
     try {
       const updatedPatient = await patientService.createEntry(values, id);
@@ -117,22 +133,6 @@ const SinglePatient = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const fetchPatient = async (id: string) => {
-      const patient = await patientService.getPatient(id);
-      setPatient(patient);
-    };
-    void fetchPatient(id!);
-  }, [id]);
-
-  useEffect(() => {
-    const fetchDiagnoses = async () => {
-      const fetchedDiagnoses: Diagnosis[] = await patientService.getDiagnoses();
-      setDiagnoses(fetchedDiagnoses);
-    };
-    void fetchDiagnoses();
-  }, [id]);
 
   if (!patient) return <div>Loading...</div>;
   if (!diagnoses) return <div>Loading...</div>;
